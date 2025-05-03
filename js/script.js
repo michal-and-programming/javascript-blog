@@ -4,11 +4,15 @@
   console.log('links:', links);
 });*/
 const titleClickHandler = function(event){
-  console.log('Link was clicked!');
+  const clickedElement = this;
+  console.log('clickedElement (with plus): ' + clickedElement);
 
-  /* remove class 'active' from all article links  */
+  const activeLinks = document.querySelectorAll(".titles a.active")
+  for (let activeLink of activeLinks){
+    activeLink.classList.remove("active");
+  }/* remove class 'active' from all article links  */
 
-  /* add class 'active' to the clicked link */
+  clickedElement.classList.add("active");/* add class 'active' to the clicked link */
 
   /* remove class 'active' from all articles */
 
