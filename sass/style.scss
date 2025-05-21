@@ -15,6 +15,25 @@ $font-text: 'Source Sans Pro', sans-serif;
   box-sizing: border-box;
 }
 
+.tag-size-1{
+  font-size: 12px;
+}
+
+.tag-size-2{
+  font-size: 13px;
+}
+
+.tag-size-3{
+  font-size: 14px;
+}
+
+.tag-size-4{
+  font-size: 15px;
+}
+
+.tag-size-5{
+  font-size: 16px;
+}
 body {
   background: $color-light;
   font-family: $font-text;
