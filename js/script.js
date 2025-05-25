@@ -3,6 +3,13 @@
   const links = document.querySelectorAll('.titles a');
   console.log('links:', links);
 });*/
+const templates = {
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
+  articleTag: Handlebars.compile(document.querySelector('#template-article-tag').innerHTML),
+  articleAuthor: Handlebars.compile(document.querySelector('#template-article-author').innerHTML),
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
+  CloudAuthor: Handlebars.compile(document.querySelector('#template-cloud-author').innerHTML)
+};
 const optArticleSelector = '.post',
       optTitleSelector = '.post-title',
       optTitleListSelector = '.titles',
@@ -47,7 +54,9 @@ function generateTitleLinks(customSelector = ""){
     const articleId = article.getAttribute("id");  /* get the article id */
     const articleTitle = article.querySelector(optTitleSelector);  /* find the title element */
     const title = articleTitle.innerHTML;  /* get the title from the title element */
-    const linkHTML = '<li><a href="#'+ articleId +'"><span>'+ title +'</span></a></li>';  /* create HTML of the link */
+    //const linkHTML = '<li><a href="#'+ articleId +'"><span>'+ title +'</span></a></li>';  /* create HTML of the link */
+    const linkHTMLData = {id: articleId, title: title};
+    const linkHTML = templates.articleLink(linkHTMLData);
     html = html + linkHTML;  /* insert link into titleList */
   }
   titleLinks.innerHTML = html;
@@ -100,8 +109,9 @@ function generateTags(){
 
     for(let tag of articleTagsArray){  /* START LOOP: for each tag */
 
-      const linkHtml = '<li><a href="#tag-'+ tag +'">'+ tag +'</a></li>';  /* generate HTML of the link */
-
+      //const linkHtml = '<li><a href="#tag-'+ tag +'">'+ tag +'</a></li>';  /* generate HTML of the link */
+      const linkHTMLData = {tag: tag};
+      const linkHtml = templates.articleTag(linkHTMLData);
       html = html + linkHtml;  /* add generated code to html variable */
     
       /* [NEW] check if this link is NOT already in allTags */
@@ -122,14 +132,20 @@ function generateTags(){
   
   const tagsParams = calculateTagsParams(allTags); //call the function with object("data-tags") as argument
   
-  let allTagsHTML = ''; /* [NEW] create variable for all links HTML code */
+  //let allTagsHTML = ''; /* [NEW] create variable for all links HTML code */
+  const allTagsData = {tags: []};
 
   for(let tag in allTags){  /* [NEW] START LOOP: for each tag in allTags: */  
-    const tagLinkHTML = calculateTagClass(allTags[tag], tagsParams);
-    allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + tagLinkHTML + '">' + tag + '</a></li>'; /* [NEW] generate code of a link and add it to allTagsHTML */
+    //const tagLinkHTML = calculateTagClass(allTags[tag], tagsParams);
+    //allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + tagLinkHTML + '">' + tag + '</a></li>'; /* [NEW] generate code of a link and add it to allTagsHTML */
+    allTagsData.tags.push({
+      tag: tag,
+      count: allTags[tag],
+      className: calculateTagClass(allTags[tag], tagsParams)
+    });
   }  /* [NEW] END LOOP: for each tag in allTags: */
 
-  tagList.innerHTML = allTagsHTML; /*[NEW] add HTML from allTagsHTML to tagList */
+  tagList.innerHTML = templates.tagCloudLink(allTagsData); /*[NEW] add HTML from allTagsHTML to tagList */
 }
 generateTags();
 
@@ -176,9 +192,13 @@ function generateAuthors(){
   const allAuthors = document.querySelectorAll(optArticleAuthorSelector);
   const authorsWrapper = document.querySelector(optAuthorsListSelector);
   let authors = {};
+  
   for (let allAuthor of allAuthors){
     const authorAttribute = allAuthor.getAttribute('data-author');
-    const linkHTML = '<a href="#author-'+ authorAttribute +'"> '+ authorAttribute +'</a>';
+    //const linkHTML = '<a href="#author-'+ authorAttribute +'"> '+ authorAttribute +'</a>';
+    const linkHTMLData = {authorAttribute: authorAttribute};
+    const linkHTML = templates.articleAuthor(linkHTMLData);
+
     allAuthor.innerHTML = linkHTML;
     if (!authors[authorAttribute]){
       authors[authorAttribute] = 1;
@@ -186,12 +206,16 @@ function generateAuthors(){
       authors[authorAttribute]++;
     }
   }
-  let html = '';
+  //let html = '';
+  const allAuthorData = {author: []};
   for (let author in authors){
-    const linkHtml = '<li><a href="#author-' + author + '">' + author + ' (' + authors[author] + ')</a></li>';;
-    html += linkHtml;
+    //const linkHtml = '<li><a href="#author-' + author + '">' + author + ' (' + authors[author] + ')</a></li>';;
+    allAuthorData.author.push({
+      name: author,
+      count: authors[author]
+    });
   }
-  authorsWrapper.innerHTML = html;
+  authorsWrapper.innerHTML = templates.CloudAuthor(allAuthorData);
 }
 
 generateAuthors();
